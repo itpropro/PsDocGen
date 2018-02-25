@@ -1,0 +1,73 @@
+# <%= $header.name %>
+
+<% if ( $header.description.text) { -%>
+## Description
+
+<%= $header.description.text %>
+<% } -%>
+<% if ( $header.parameters.parameter) { %>
+## Parameters
+
+| Name  | Alias  | Description | Required? | Pipeline Input | Default Value |
+| --- | --- | --- | --- | --- | --- |
+<% $header.parameters.parameter | % { -%>
+| <%= $_.Name %> | <%= $_.Aliases %> | <%= ($_.Description | out-string).Trim() %> | <%= $_.Required %> | <%= $_.PipelineInput %> | <%= $_.DefaultValue %> |
+<% } -%>
+<% } -%>
+---
+
+## Functions:
+
+<% $helpContent | Foreach-Object { -%>
+## <%= $_.Name %>
+
+### Synopsis
+
+<%= $_.synopsis.Trim() %>
+
+### Syntax
+
+``````powershell
+<%= $_.syntax %>
+``````
+
+### Parameters
+
+| Name  | Alias  | Description | Required? | Pipeline Input | Default Value |
+| --- | --- | --- | --- | --- | --- |
+<% $_.parameters.parameter | % { -%>
+| <%= $_.Name %> | <%= $_.Aliases %> | <%= ($_.Description | out-string).Trim() %> | <%= $_.Required %> | <%= $_.PipelineInput %> | <%= $_.DefaultValue %> |
+<% } -%>
+<% if ($_.inputtypes.inputtype.type.name) { -%>
+### Inputs
+
+- <%= $_.inputtypes.inputtype.type.name %>
+<% } -%>
+<% if ( $_.returnvalues.returnvalue.type.name) { %>
+### Outputs
+
+- <%= $_.returnvalues.returnvalue.type.name -%>
+<% } -%>
+<% if ($_.alertSet) { -%>
+### Notes
+
+<%= $_.alertSet  | out-string %>
+<% } -%>
+<%= $isExamples = (($_.examples | Out-String).Trim().length -gt 0) %>
+<% if ($isExamples) { -%>
+
+### Examples
+
+**<%= $_.examples.example.title.replace(`"-`",`"`").trim() -%>**
+
+``````powershell
+<%= $_.examples.example.code | out-string -%>
+``````
+
+<% } -%>
+<% if ($_.relatedLinks) { -%>
+### Links
+
+<%= $_.relatedLinks -%>
+<% } -%>
+<% } -%>
